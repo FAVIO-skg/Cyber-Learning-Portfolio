@@ -1,0 +1,106 @@
+# 🔍 Vulnerability Management Lab  
+### Windows VM — Authenticated vs. Unauthenticated Scans
+
+---
+
+## 🎯 Objective
+Compare authenticated and unauthenticated vulnerability scans using **Tenable (Nessus)** to understand how credentials affect visibility, scan duration, and findings.
+
+---
+
+## 🧠 Background
+A **vulnerability** is a flaw that can be exploited to compromise a system.
+
+- **Unauthenticated scans** = external-only view (no login).
+- **Authenticated scans** = deeper internal inspection using valid credentials.
+
+More access → More accurate results → Longer scan time.
+
+---
+
+## 🧩 Lab Steps
+
+1. **Create a Windows 10 VM** in Azure.  
+   - Use a strong password (avoid `labuser/Cyberlab123!`).  
+   - Disable Windows Firewall.
+
+2. **Enable Remote Admin Access:**
+   ```powershell
+   Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" `
+   -Name "LocalAccountTokenFilterPolicy" -Value 1 -Type DWord -Force
+
+	3.	Configure Tenable Scan:
+	•	Type: Basic Network Scan
+	•	Scanner: LOCAL-SCAN-ENGINE-01
+	•	Target: Private IP (preferred)
+	•	Discovery: Ping Host ✅ | Fast Network Discovery ✅
+	•	Leave credentials blank for first run.
+	4.	Run Scan #1 – Unauthenticated
+	•	Export results.
+	•	Record scan duration.
+	5.	Edit the scan – Add valid Windows credentials.
+	6.	Run Scan #2 – Authenticated
+	•	Export results.
+	•	Record scan duration.
+	7.	Delete VM and confirm cleanup in the Azure resource group.
+	8.	Compare findings between the two scans.
+
+⸻
+
+📊 Results Comparison
+
+Scan Type	Duration	Critical	High	Medium	Low	Info	Total
+Unauthenticated	13 min	0	0	4	1	30	35
+Authenticated	22 min	0	3	4	2	131	140
+
+
+⸻
+
+🧮 Analysis
+	•	Vulnerability Count: Authenticated scan found 4× more vulnerabilities.
+	•	Severity: Only authenticated scans revealed high-risk findings
+(e.g., Outlook, Teams, WinVerifyTrust).
+	•	Duration: Authenticated scan took ~9 minutes longer due to deeper inspection.
+
+⸻
+
+🧠 Why the Difference
+
+Type	Description	Visibility	Typical Findings
+Unauthenticated	Scans external-facing network services only.	Surface-level	Open ports, SSL/TLS misconfigurations, OS detection.
+Authenticated	Uses credentials for system-level inspection.	Deep	Patch compliance, registry settings, configuration errors.
+
+Analogy:
+
+Unauthenticated = looking at the house from the street.
+Authenticated = walking inside to inspect every room.
+
+⸻
+
+🧾 Key Takeaways
+	•	Credentials = greater visibility + higher accuracy.
+	•	Authenticated scans take longer but identify more real risks.
+	•	Always clean up VMs after lab work to prevent exposure.
+	•	Supports NIST SP 800-40 patch management principles.
+	•	Use results to prioritize risk responses:
+	•	Avoid → Remove the risk
+	•	Mitigate → Patch the system
+	•	Transfer → Shift risk via contract or insurance
+	•	Accept → Document and monitor the risk
+
+⸻
+
+📚 References
+	•	NIST SP 800-40: Guide to Enterprise Patch Management Planning
+	•	Tenable Vulnerability Management Documentation
+	•	MITRE CVE Database — https://cve.mitre.org
+
+⸻
+
+✅ Summary
+
+Authenticated scans provide a complete picture of an asset’s risk posture, aligning with professional vulnerability management practices and interview-ready real-world examples.
+
+---
+
+Would you like me to include a **GitHub metadata block** (title, tags, author, and repo badges) so it fits a cybersecurity-portfolio repo structure?
